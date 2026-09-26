@@ -1,3 +1,6 @@
-com/redis/ClientConnection.class
-com/redis/MiniRedis.class
+com/command/RequestParser.class
+com/command/Command.class
 com/redis/RedisServer.class
+com/redis/ClientConnection.class
+com/command/CommandExecutor.class
+com/redis/MiniRedis.class

@@ -1,3 +1,6 @@
+/home/harsh/Redis/miniredis/src/main/java/com/command/Command.java
+/home/harsh/Redis/miniredis/src/main/java/com/command/CommandExecutor.java
+/home/harsh/Redis/miniredis/src/main/java/com/command/RequestParser.java
 /home/harsh/Redis/miniredis/src/main/java/com/redis/ClientConnection.java
 /home/harsh/Redis/miniredis/src/main/java/com/redis/MiniRedis.java
 /home/harsh/Redis/miniredis/src/main/java/com/redis/RedisServer.java
