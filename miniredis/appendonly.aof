@@ -1,0 +1,3 @@
+SET db miniredis
+RPUSH colors red green blue
+HSET users:1 name harsh

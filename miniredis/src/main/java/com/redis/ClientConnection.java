@@ -5,15 +5,19 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
+
 import com.command.*;
+import com.storage.*;
+
+
 
 public class ClientConnection implements Runnable {
     private final Socket clientSocket;
     private final CommandExecutor commandExecutor;
 
-    public ClientConnection(Socket socket) {
+    public ClientConnection(Socket socket, Storage storage, AofManager aofManager) {
         this.clientSocket = socket;
-        this.commandExecutor = new CommandExecutor();
+        this.commandExecutor = new CommandExecutor(storage, aofManager);
     }
 
     @Override
@@ -27,13 +31,8 @@ public class ClientConnection implements Runnable {
         ) {
             String inputLine;
             while ((inputLine = reader.readLine()) != null) {
-                // 1. Parse raw text into a Command
                 Command command = RequestParser.parse(inputLine);
-                
-                // 2. Execute command and obtain result string
                 String response = commandExecutor.execute(command);
-                
-                // 3. Send response back to client
                 writer.println(response);
             }
         } catch (IOException e) {

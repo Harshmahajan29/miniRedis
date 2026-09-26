@@ -11,8 +11,8 @@ public class RequestParser {
             return null;
         }
 
-        // Split by whitespace
-        String[] parts = inputLine.trim().split("\\s+");
+        String trimmed = inputLine.trim();
+        String[] parts = trimmed.split("\\s+");
         String commandName = parts[0];
 
         List<String> args = new ArrayList<>();
@@ -20,6 +20,6 @@ public class RequestParser {
             args.addAll(Arrays.asList(parts).subList(1, parts.length));
         }
 
-        return new Command(commandName, args);
+        return new Command(commandName, args, trimmed);
     }
 }
