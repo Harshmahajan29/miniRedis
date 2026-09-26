@@ -409,7 +409,7 @@ Subscribers can receive messages published to the corresponding channel.
 ### Clone the Repository
 
 ```bash
-git clone <repository-url>
+git clone https://github.com/Harshmahajan29/miniRedis.git
 cd miniredis
 ```
 
