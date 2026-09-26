@@ -1,0 +1,3 @@
+com/redis/ClientConnection.class
+com/redis/MiniRedis.class
+com/redis/RedisServer.class

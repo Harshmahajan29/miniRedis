@@ -1,0 +1,51 @@
+com.redis
+│
+├── MiniRedis.java
+│
+├── server
+│   ├── RedisServer.java
+│   └── ClientHandler.java
+│
+├── protocol
+│   ├── RequestParser.java
+│   └── ResponseWriter.java
+│
+├── command
+│   ├── Command.java
+│   ├── CommandParser.java
+│   └── CommandExecutor.java
+│
+├── storage
+│   ├── Storage.java
+│   ├── StringStore.java
+│   ├── ListStore.java
+│   ├── SetStore.java
+│   └── HashStore.java
+│
+├── expiration
+│   └── ExpirationManager.java
+│
+├── persistence
+│   ├── AofManager.java
+│   └── RecoveryManager.java
+│
+├── transaction
+│   └── TransactionManager.java
+│
+├── pubsub
+│   └── PubSubManager.java
+│
+├── memory
+│   └── EvictionManager.java
+│
+├── security
+│   └── AuthenticationManager.java
+│
+├── config
+│   └── ConfigManager.java
+│
+├── replication
+│   └── ReplicationManager.java
+│
+└── monitoring
+    └── MetricsManager.java
