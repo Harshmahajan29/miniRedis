@@ -68,4 +68,8 @@ public class ListStore {
     public void delInternal(String key) {
         map.remove(key);
     }
+
+    public int size() {
+        return map.size();
+    }
 }

@@ -5,25 +5,32 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
-import com.command.*;
 import com.storage.*;
-
+import com.command.*;
 
 
 public class ClientConnection implements Runnable {
+    private static final AtomicInteger activeClients = new AtomicInteger(0);
+
     private final Socket clientSocket;
+    private final Storage storage;
     private final CommandExecutor commandExecutor;
+    private final TransactionManager transactionManager;
 
     public ClientConnection(Socket socket, Storage storage, AofManager aofManager) {
         this.clientSocket = socket;
+        this.storage = storage;
         this.commandExecutor = new CommandExecutor(storage, aofManager);
+        this.transactionManager = new TransactionManager();
     }
 
     @Override
     public void run() {
+        activeClients.incrementAndGet();
         String clientAddress = clientSocket.getRemoteSocketAddress().toString();
-        System.out.println("Client connected: " + clientAddress);
 
         try (
             BufferedReader reader = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
@@ -32,17 +39,39 @@ public class ClientConnection implements Runnable {
             String inputLine;
             while ((inputLine = reader.readLine()) != null) {
                 Command command = RequestParser.parse(inputLine);
-                String response = commandExecutor.execute(command);
-                writer.println(response);
+                if (command == null) continue;
+
+                String cmdName = command.getName();
+
+                // Broadcast command line to registered MONITOR clients
+                if (!"MONITOR".equals(cmdName)) {
+                    storage.getMetricsManager().publishToMonitors(command.getRawInput(), clientAddress);
+                }
+
+                // Handle INFO command
+                if ("INFO".equals(cmdName)) {
+                    writer.println(storage.getMetricsManager().getInfo(storage, activeClients.get()));
+                    continue;
+                }
+
+                // Handle MONITOR command
+                if ("MONITOR".equals(cmdName)) {
+                    storage.getMetricsManager().registerMonitor(writer);
+                    writer.println("OK");
+                    continue;
+                }
+
+                // Existing Pub/Sub, Transaction, and Command routing...
+                writer.println(commandExecutor.execute(command));
             }
         } catch (IOException e) {
-            System.err.println("Connection error with client " + clientAddress + ": " + e.getMessage());
+            System.err.println("Connection error: " + e.getMessage());
         } finally {
+            activeClients.decrementAndGet();
             try {
                 clientSocket.close();
-                System.out.println("Client disconnected: " + clientAddress);
             } catch (IOException e) {
-                System.err.println("Error closing client socket: " + e.getMessage());
+                System.err.println("Error closing socket: " + e.getMessage());
             }
         }
     }

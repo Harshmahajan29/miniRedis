@@ -38,4 +38,8 @@ public class HashStore {
     public void delInternal(String key) {
         map.remove(key);
     }
+
+    public int size() {
+        return map.size();
+    }
 }

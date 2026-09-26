@@ -19,7 +19,7 @@ public class RedisServer {
     public RedisServer(int port) {
         this.port = port;
         this.threadPool = Executors.newCachedThreadPool();
-        this.storage = new Storage();
+        this.storage = new Storage(3);
         this.aofManager = new AofManager(AOF_FILE);
 
         // Run recovery replay before opening server to clients

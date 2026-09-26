@@ -1,0 +1,59 @@
+package com.storage;
+
+import com.redis.ExpirationManager;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
+
+public class StorageTest {
+    private Storage storage;
+
+    @BeforeEach
+    void setUp() {
+        // Storage capped at 3 keys to test LRU eviction behavior
+        storage = new Storage(3);
+    }
+
+    @Test
+    void testSetAndGet() {
+        storage.getStringStore().set("k1", "v1");
+        String result = storage.getStringStore().get("k1", storage.getExpirationManager(), storage);
+        assertEquals("v1", result);
+    }
+
+    @Test
+    void testExpiration() throws InterruptedException {
+        storage.getStringStore().set("expiringKey", "val");
+        storage.getExpirationManager().setTTL("expiringKey", 100); // 100ms TTL
+
+        assertNotNull(storage.getStringStore().get("expiringKey", storage.getExpirationManager(), storage));
+
+        Thread.sleep(150); // Wait for key to expire
+
+        assertNull(storage.getStringStore().get("expiringKey", storage.getExpirationManager(), storage));
+    }
+
+    @Test
+    void testLruEviction() {
+        storage.getStringStore().set("k1", "v1");
+        storage.touchKey("k1");
+
+        storage.getStringStore().set("k2", "v2");
+        storage.touchKey("k2");
+
+        storage.getStringStore().set("k3", "v3");
+        storage.touchKey("k3");
+
+        // Touch k1 so k2 becomes the oldest / LRU key
+        storage.touchKey("k1");
+
+        // Adding 4th key triggers eviction of k2
+        storage.evictIfNecessary();
+        storage.getStringStore().set("k4", "v4");
+        storage.touchKey("k4");
+
+        assertNull(storage.getStringStore().get("k2", storage.getExpirationManager(), storage));
+        assertNotNull(storage.getStringStore().get("k1", storage.getExpirationManager(), storage));
+    }
+}

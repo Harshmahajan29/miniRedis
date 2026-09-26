@@ -1,9 +1,6 @@
 package com.storage;
 
-import java.util.Collections;
-import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.Set;
 import java.util.*;
 
 public class SetStore {
@@ -51,5 +48,8 @@ public class SetStore {
 
     public void delInternal(String key) {
         map.remove(key);
+    }
+    public int size() {
+        return map.size();
     }
 }

@@ -1,3 +1,16 @@
 SET db miniredis
 RPUSH colors red green blue
 HSET users:1 name harsh
+SET account1 100
+SET account2 200
+set account3 2323
+SET KEY1 A
+set key2 b
+set key3 c
+set key4 d
+set key1 a
+SET users:1 harsh
+set users:2 kaushal
+set users:1 harsh
+set users:2 jatin
+set users:3 p

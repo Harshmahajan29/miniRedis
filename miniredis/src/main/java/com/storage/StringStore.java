@@ -2,8 +2,6 @@ package com.storage;
 
 import com.Expiration.*;
 
-
-
 import java.util.concurrent.ConcurrentHashMap;
 
 public class StringStore {
@@ -49,5 +47,9 @@ public class StringStore {
             long current = Long.parseLong(v);
             return String.valueOf(current + 1);
         }));
+    }
+
+    public int size() {
+        return map.size();
     }
 }
